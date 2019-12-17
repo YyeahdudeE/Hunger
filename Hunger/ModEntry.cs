@@ -12,11 +12,13 @@ namespace Hunger
         private float ticksPerHour = 0f;
         private float gainAmount = 0f;
         private float drainAmount = 0f;
+        private bool inOwnCabin = false;
         private ModConfig config;
 
         public override void Entry(IModHelper helper)
         {
             this.config = helper.ReadConfig<ModConfig>();
+
             ticksPerHour = 8 * config.RealSecondsPerInGame10Minutes * 6;
             Helper.Events.GameLoop.UpdateTicked += GameLoop_UpdateTicked;
             Helper.Events.GameLoop.GameLaunched += GameLoop_GameLaunched;
@@ -26,7 +28,7 @@ namespace Hunger
         {
             if (config.HungerMailEnabled)
             {
-                Helper.Content.AssetEditors.Add(new ModMail());
+                Helper.Content.AssetEditors.Add(new ModMail(this.config.NameOfMailSender));
             }
         }
 
@@ -39,7 +41,15 @@ namespace Hunger
                 if (Game1.player == null || Game1.hasLoadedGame == false || Game1.isFestival() || Game1.activeClickableMenu != null || Game1.currentMinigame != null || Game1.dialogueUp == true || Game1.eventUp == true || !Game1.game1.IsActive)
                     return;
 
-                if (Game1.currentLocation.Name == "FarmHouse")
+
+                if (Game1.currentLocation.Name == "Cabin")
+                {
+                    StardewValley.Locations.Cabin cabin = Game1.currentLocation as StardewValley.Locations.Cabin;
+                    if (cabin.owner == Game1.player) { inOwnCabin = true; }
+                }
+                else { inOwnCabin = false; }
+
+                if ((Game1.currentLocation.Name == "FarmHouse" && Game1.player.IsMainPlayer) || inOwnCabin)
                 {
                     gainAmount = 0f;
                     switch (Game1.player.HouseUpgradeLevel)
@@ -126,5 +136,7 @@ namespace Hunger
         public float RealSecondsPerInGame10Minutes { get; set; } = 7;
 
         public bool HungerMailEnabled { get; set; } = true;
+
+        public string NameOfMailSender { get; set; } = "Hunger";
     }
 }
