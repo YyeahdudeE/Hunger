@@ -129,8 +129,8 @@ namespace Hunger
         public float StandingStillStaminaDrainPerHourFarmLevel2 { get; set; } = 12;
         public float StandingStillStaminaDrainPerHourFarmLevel3 { get; set; } = 15;
 
-        public float WalkingMultiplier { get; set; } = 2;
-        public float InMineMultiplier { get; set; } = 2;
+        public float WalkingMultiplier { get; set; } = 1.75f;
+        public float InMineMultiplier { get; set; } = 1.25f;
         public float AfterMidnightMultiplier { get; set; } = 1.5f;
 
         public float RealSecondsPerInGame10Minutes { get; set; } = 7;
